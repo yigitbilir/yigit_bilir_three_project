@@ -7,7 +7,7 @@ class CareersPage(BasePage):
     """Page Object for Insider Careers Page"""
     
     # Locators
-    SEE_ALL_QA_JOBS_BTN = (By.XPATH, "//a[contains(text(),'See all QA jobs')]")
+    SEE_ALL_QA_JOBS_BTN = (By.XPATH, "//*[contains(text(),'See all QA jobs')]")
     FILTER_LOCATION = (By.ID, "filter-by-location")
     FILTER_DEPARTMENT = (By.ID, "filter-by-department")
     LOCATION_OPTION_ISTANBUL = (By.XPATH, "//span[@id='select2-filter-by-location-container']")
@@ -31,7 +31,7 @@ class CareersPage(BasePage):
     def click_see_all_qa_jobs(self):
         """Click on 'See all QA jobs' button"""
         try:
-            self.scroll_to_element(self.SEE_ALL_QA_JOBS_BTN)
+            self.is_element_visible(self.SEE_ALL_QA_JOBS_BTN, timeout=10)
             time.sleep(1)
             self.click_element(self.SEE_ALL_QA_JOBS_BTN)
             self.wait_for_page_load()
@@ -40,7 +40,7 @@ class CareersPage(BasePage):
             self.take_screenshot("click_see_all_qa_jobs_failed")
             raise
             
-    def filter_by_location(self, location="Istanbul, Turkey"):
+    def filter_by_location(self, location="Istanbul, Turkiye"):
         """Filter jobs by location"""
         try:
             # Click location dropdown
