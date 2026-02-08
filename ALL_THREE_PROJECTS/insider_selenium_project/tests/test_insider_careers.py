@@ -7,9 +7,9 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from insider_selenium_project.pages.home_page import HomePage
-from insider_selenium_project.pages.careers_page import CareersPage
-from insider_selenium_project.pages.lever_application_page import LeverApplicationPage
+from pages.home_page import HomePage
+from pages.careers_page import CareersPage
+from pages.lever_application_page import LeverApplicationPage
 
 
 class TestInsiderCareers:
@@ -43,8 +43,8 @@ class TestInsiderCareers:
         print("✓ Clicked 'See all QA jobs'")
         
         # Step 4: Filter by Location - Istanbul, Turkey
-        print("\n=== Step 4: Filtering by Location - Istanbul, Turkey ===")
-        careers_page.filter_by_location("Istanbul, Turkey")
+        print("\n=== Step 4: Filtering by Location - Istanbul, Turkiye ===")
+        careers_page.filter_by_location("Istanbul, Turkiye")
         print("✓ Filtered by location")
         
         # Step 5: Filter by Department - Quality Assurance
