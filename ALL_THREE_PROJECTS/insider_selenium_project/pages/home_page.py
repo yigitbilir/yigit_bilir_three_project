@@ -1,13 +1,14 @@
 from selenium.webdriver.common.by import By
-from insider_selenium_project.resources.base_page import BasePage
+from resources.base_page import BasePage
 
 
 class HomePage(BasePage):
     """Page Object for Insider Home Page"""
     
     # Locators
-    LOGO = (By.CSS_SELECTOR, "a.navbar-brand")
-    NAVIGATION_MENU = (By.CSS_SELECTOR, "nav#navigation")
+    LOGO = (By.CLASS_NAME, "header-logo")
+    MAIN_MENU_BANNER_1 = (By.XPATH, "//div[@class='homepage-hero-content-title opacity-scroll visible']")
+    MAIN_MENU_BANNER_2 = (By.XPATH, "//div[@class='homepage-hero-content-description fadeInUp-scroll visible']")
     COMPANY_MENU = (By.XPATH, "//a[contains(text(),'Company')]")
     CAREERS_LINK = (By.XPATH, "//a[text()='Careers']")
     HERO_SECTION = (By.CSS_SELECTOR, ".hero-section, #hero, section.hero, .main-hero")
@@ -35,8 +36,9 @@ class HomePage(BasePage):
         """Verify home page is loaded by checking main elements"""
         try:
             logo_visible = self.is_element_visible(self.LOGO, timeout=10)
-            nav_visible = self.is_element_visible(self.NAVIGATION_MENU, timeout=10)
-            return logo_visible and nav_visible
+            main_menu_banner1 = self.is_element_visible(self.MAIN_MENU_BANNER_1, timeout=10)
+            main_menu_banner2 = self.is_element_visible(self.MAIN_MENU_BANNER_2, timeout=10)
+            return logo_visible and main_menu_banner2
         except Exception as e:
             self.take_screenshot("home_page_load_failed")
             raise AssertionError(f"Home page did not load properly: {str(e)}")
