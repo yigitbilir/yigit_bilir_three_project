@@ -3,6 +3,8 @@ from datetime import datetime
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
 
 
 class BasePage:
@@ -51,6 +53,16 @@ class BasePage:
         except Exception as e:
             self.take_screenshot(f"send_keys_failed_{locator[1]}")
             raise
+
+    def select_from_dropdown_by_select_class(self, dropdown_id, option_text):
+        self.wait_for_page_load()
+        # Dropdown'ı bul
+        dropdown_element = self.driver.find_element(By.ID, dropdown_id)
+        # Select objesi oluştur
+        select = Select(dropdown_element)
+        # Text'e göre seç
+        select.select_by_visible_text(option_text)
+        print(f"✓ Selected: {option_text}")
             
     def is_element_visible(self, locator, timeout=10):
         """Check if element is visible"""
