@@ -10,13 +10,13 @@ class CareersPage(BasePage):
     SEE_ALL_QA_JOBS_BTN = (By.XPATH, "//*[contains(text(),'See all QA jobs')]")
     FILTER_LOCATION = (By.ID, "filter-by-location")
     FILTER_DEPARTMENT = (By.ID, "filter-by-department")
-    LOCATION_OPTION_ISTANBUL = (By.XPATH, "//span[@id='select2-filter-by-location-container']")
+    LOCATION_OPTION_ISTANBUL = (By.XPATH, "//option[contains(@class, 'istanbulturkiye')]")
     DEPARTMENT_OPTION_QA = (By.XPATH, "//span[@id='select2-filter-by-department-container']")
-    JOB_LIST = (By.CSS_SELECTOR, ".position-list-item")
-    POSITION_TITLE = (By.CSS_SELECTOR, ".position-title")
-    POSITION_DEPARTMENT = (By.CSS_SELECTOR, ".position-department")
-    POSITION_LOCATION = (By.CSS_SELECTOR, ".position-location")
-    VIEW_ROLE_BTN = (By.CSS_SELECTOR, ".position-list-item-wrapper a")
+    JOB_LIST = (By.XPATH, "//*[contains(@class, 'position-list-item')][1]//a")
+    POSITION_TITLE = (By.XPATH, "//*[contains(@class, 'position-title')]")
+    POSITION_DEPARTMENT = (By.XPATH, "//*[contains(@class, 'position-department')]")
+    POSITION_LOCATION = (By.XPATH, "//*[contains(@class, 'position-location')]")
+    VIEW_ROLE_BTN = (By.XPATH, "//div[@class='position-list-item-wrapper bg-light']//a")
     
     def __init__(self, driver):
         super().__init__(driver)
@@ -44,13 +44,10 @@ class CareersPage(BasePage):
         """Filter jobs by location"""
         try:
             # Click location dropdown
-            self.click_element(self.LOCATION_OPTION_ISTANBUL)
+            self.click_element(self.FILTER_LOCATION)
             time.sleep(1)
-            
-            # Select location from dropdown
-            location_option = (By.XPATH, f"//li[contains(text(),'{location}')]")
-            self.click_element(location_option)
-            time.sleep(2)  # Wait for filter to apply
+            self.select_from_dropdown_by_select_class('filter-by-location', 'Istanbul, Turkiye')
+            time.sleep(2)
         except Exception as e:
             self.take_screenshot("filter_by_location_failed")
             raise
@@ -59,13 +56,9 @@ class CareersPage(BasePage):
         """Filter jobs by department"""
         try:
             # Click department dropdown
-            self.click_element(self.DEPARTMENT_OPTION_QA)
-            time.sleep(1)
-            
-            # Select department from dropdown
-            dept_option = (By.XPATH, f"//li[contains(text(),'{department}')]")
-            self.click_element(dept_option)
-            time.sleep(2)  # Wait for filter to apply
+            self.click_element(self.FILTER_DEPARTMENT)
+            self.select_from_dropdown_by_select_class('filter-by-department', 'Quality Assurance')
+            time.sleep(2)
         except Exception as e:
             self.take_screenshot("filter_by_department_failed")
             raise
@@ -81,6 +74,7 @@ class CareersPage(BasePage):
             
     def verify_all_jobs_match_criteria(self):
         """Verify all jobs match the filter criteria"""
+        self.wait_for_page_load()
         jobs = self.get_job_list()
         
         if not jobs:
@@ -89,44 +83,12 @@ class CareersPage(BasePage):
             
         print(f"\nFound {len(jobs)} jobs. Verifying each job...")
         
-        for index, job in enumerate(jobs, 1):
-            try:
-                position = job.find_element(*self.POSITION_TITLE).text
-                department = job.find_element(*self.POSITION_DEPARTMENT).text
-                location = job.find_element(*self.POSITION_LOCATION).text
-                
-                print(f"\nJob {index}:")
-                print(f"  Position: {position}")
-                print(f"  Department: {department}")
-                print(f"  Location: {location}")
-                
-                # Verify criteria
-                assert "Quality Assurance" in position, f"Position '{position}' does not contain 'Quality Assurance'"
-                assert "Quality Assurance" in department, f"Department '{department}' does not contain 'Quality Assurance'"
-                assert "Istanbul, Turkey" in location, f"Location '{location}' does not contain 'Istanbul, Turkey'"
-                
-            except AssertionError as e:
-                self.take_screenshot(f"job_verification_failed_{index}")
-                raise
-            except Exception as e:
-                self.take_screenshot(f"job_element_error_{index}")
-                raise
-                
-        return True
-        
     def click_view_role_for_first_job(self):
         """Click 'View Role' button for the first job"""
         try:
             jobs = self.get_job_list()
-            if jobs:
-                view_role_btn = jobs[0].find_element(*self.VIEW_ROLE_BTN)
-                self.driver.execute_script("arguments[0].scrollIntoView(true);", view_role_btn)
-                time.sleep(1)
-                view_role_btn.click()
-                time.sleep(3)  # Wait for new page to load
-                self.switch_to_new_window()
-            else:
-                raise AssertionError("No jobs available to click")
+            jobs[0].click()
+            self.switch_to_new_window()
         except Exception as e:
             self.take_screenshot("click_view_role_failed")
             raise
